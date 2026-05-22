@@ -222,7 +222,7 @@
             position: absolute;
             top: 0; bottom: 0; right: 0;
             display: flex;
-            width: 240px; /* Width of actions area — 80px × 3 buttons (share + edit + delete) */
+            width: 150px; /* Width of actions area — 50px × 3 buttons (share + edit + delete). Sized to fit inside the half-width West/East column even on narrow phones (iPhone SE). Was 240px, which overflowed the column and clipped the card. */
             z-index: 1;
             visibility: hidden; /* HIDDEN BY DEFAULT to prevent flashing during scroll */
         }
@@ -3187,7 +3187,7 @@
                 } else if (Math.abs(diffY) > 10) { swipeDirection = 'vertical'; }
             }
             if (swipeDirection === 'horizontal') {
-                if (diffX < 0) { isSwiping = true; const translateX = Math.max(diffX, -160); el.style.transform = `translateX(${translateX}px)`; if (e.cancelable) e.preventDefault(); }
+                if (diffX < 0) { isSwiping = true; const translateX = Math.max(diffX, -150); el.style.transform = `translateX(${translateX}px)`; if (e.cancelable) e.preventDefault(); }
             }
         };
 
@@ -3196,7 +3196,7 @@
              if (swipeDirection === 'vertical') { if (swipeCurrentId !== id) { el.style.transform = `translateX(0)`; if(actions) actions.style.visibility = 'hidden'; } return; }
              el.style.transition = 'transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
              const currentX = e.changedTouches[0].clientX; const diff = currentX - swipeStartX;
-             if (diff < -60 && swipeDirection === 'horizontal') { el.style.transform = `translateX(-240px)`; swipeCurrentId = id; if(actions) actions.style.visibility = 'visible'; setTimeout(() => isSwiping = false, 50); } else { el.style.transform = `translateX(0)`; swipeCurrentId = null; if(actions) setTimeout(() => actions.style.visibility = 'hidden', 200); }
+             if (diff < -60 && swipeDirection === 'horizontal') { el.style.transform = `translateX(-150px)`; swipeCurrentId = id; if(actions) actions.style.visibility = 'visible'; setTimeout(() => isSwiping = false, 50); } else { el.style.transform = `translateX(0)`; swipeCurrentId = null; if(actions) setTimeout(() => actions.style.visibility = 'hidden', 200); }
         };
 
         // NEW: Handle Right Click (Context Menu) to Toggle Edit/Delete options
@@ -3226,7 +3226,7 @@
             } else {
                 // Open
                 el.style.transition = 'transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
-                el.style.transform = `translateX(-240px)`;
+                el.style.transform = `translateX(-150px)`;
                 swipeCurrentId = id;
                 if(actions) actions.style.visibility = 'visible';
             }
