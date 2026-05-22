@@ -29,7 +29,7 @@ like from inside the app.
 
 | English | 中文 | Coordinates |
 |---|---|---|
-| Jerantut Kg. Simpang Tebing Tinggi | 德宾丁宜新村 | 3.87467, 102.34467 |
+| Kg. Simpang Tebing Tinggi | 德宾丁宜新村 | 3.87467, 102.34467 |
 
 The app also seeds a default user display name (**CR**), which stays editable
 via **Edit Name** in the app.
@@ -91,7 +91,7 @@ The service worker caches the app shell. When you push changes, bump the
 their next visit. The current value is:
 
 ```
-wnext-weathernextforjerantut-202605230415
+wnext-weathernextforjerantut-202605230505
 ```
 
 ---

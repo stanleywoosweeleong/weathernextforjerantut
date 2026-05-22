@@ -139,8 +139,8 @@
         header { padding-top: var(--safe-top); height: calc(105px + var(--safe-top)); }
         footer { padding-bottom: var(--safe-bottom); height: calc(110px + var(--safe-bottom)); }
 
-        .name-label-en { font-size: 22px; font-weight: 900; color: #0f172a; text-transform: uppercase; line-height: 1.1; letter-spacing: -0.02em; }
-        .name-label-zh { font-size: 20px; font-weight: 900; color: #1d4ed8; line-height: 1.1; margin-top: 4px; }
+        .name-label-en { font-size: 22px; font-weight: 900; color: #0f172a; text-transform: uppercase; line-height: 1.1; letter-spacing: -0.02em; overflow-wrap: anywhere; word-break: break-word; }
+        .name-label-zh { font-size: 20px; font-weight: 900; color: #1d4ed8; line-height: 1.1; margin-top: 4px; overflow-wrap: anywhere; word-break: break-word; }
 
         /* ============================================================
            MOBILE LAYOUT FIXES
@@ -245,9 +245,14 @@
                 z-index: 30;       /* ...raised above the card content when open */
                 visibility: visible !important;
             }
-            /* Card never translates on desktop — keep it put, no clipping. */
+            /* Card never translates on desktop — keep it put, no clipping.
+               When the action bar is open it reserves space on the right
+               (padding) so the name/readings re-flow beside the bar instead
+               of being hidden underneath it. */
             .list-item-wrapper.actions-open .list-item-content {
                 transform: translateX(0) !important;
+                padding-right: 234px !important; /* 210px bar + 24px breathing room */
+                transition: padding-right 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
             }
             .action-btn svg { width: 34px; height: 34px; }
         }
@@ -1892,10 +1897,11 @@
         // unless SEED_VERSION is bumped in a future build.
         // ============================================================
         (function seedCompanyLocations() {
-            var SEED_VERSION = '1';
+            var SEED_VERSION = '2';
             var SEED_FLAG_KEY = 'weathernextforjerantut__wnext_company_seed_version';
             var CUSTOM_KEY = 'weathernextforjerantut__wnext_v41_custom_store';
             var FAV_KEY = 'weathernextforjerantut__wnext_v41_favs_store';
+            var RENAME_KEY = 'weathernextforjerantut__wnext_v41_rename_store';
             var NAME_KEY = 'weathernextforjerantut__WNEXT_USER_NAME';
             var NAME_ASCII_KEY = 'weathernextforjerantut__WNEXT_USER_NAME_ASCII';
             try {
@@ -1910,7 +1916,7 @@
                     localStorage.setItem(NAME_KEY, "CR");
                     localStorage.setItem(NAME_ASCII_KEY, "CR");
                 }
-                var seedLocs = [{"id": "c_jt-simpang-tebing-tinggi", "en": "Jerantut Kg. Simpang Tebing Tinggi", "zh": "德宾丁宜新村", "lat": 3.87467, "lng": 102.34467, "t": 0, "p": 0, "em": false}];
+                var seedLocs = [{"id": "c_jt-simpang-tebing-tinggi", "en": "Kg. Simpang Tebing Tinggi", "zh": "德宾丁宜新村", "lat": 3.87467, "lng": 102.34467, "t": 0, "p": 0, "em": false}];
                 // Merge into whatever is already there (e.g. a deep-link
                 // location the user received before first cold start).
                 var existing = [];
@@ -1925,6 +1931,41 @@
                     if (!haveIds[l.id]) existing.push(l);
                 });
                 localStorage.setItem(CUSTOM_KEY, JSON.stringify(existing));
+                // --- SEED v2 name migration -------------------------------
+                // The seeded farm originally shipped as
+                // "Jerantut Kg. Simpang Tebing Tinggi" and was later shortened
+                // to "Kg. Simpang Tebing Tinggi". On devices that already ran
+                // seed v1 the old long name is saved in the custom store, and
+                // bumping the version alone won't replace it (the merge above
+                // only ADDS missing farms). So here we explicitly rewrite the
+                // seeded farm's English name — but ONLY when it still equals a
+                // known old auto-seeded value, so a user's own Edit Name
+                // choice is never overwritten.
+                try {
+                    var OLD_EN_NAMES = ["Jerantut Kg. Simpang Tebing Tinggi"];
+                    var NEW_EN = "Kg. Simpang Tebing Tinggi";
+                    var SEED_FARM_ID = "c_jt-simpang-tebing-tinggi";
+                    var custMig = JSON.parse(localStorage.getItem(CUSTOM_KEY) || "[]");
+                    if (Array.isArray(custMig)) {
+                        var migrated = false;
+                        custMig.forEach(function (l) {
+                            if (l && l.id === SEED_FARM_ID && OLD_EN_NAMES.indexOf(l.en) !== -1) {
+                                l.en = NEW_EN; migrated = true;
+                            }
+                        });
+                        if (migrated) localStorage.setItem(CUSTOM_KEY, JSON.stringify(custMig));
+                    }
+                    // Also clear a stale rename-store entry if it still holds an
+                    // old auto-seeded name (the rename store overrides the
+                    // custom store when the app renders names).
+                    var renMig = JSON.parse(localStorage.getItem(RENAME_KEY) || "{}");
+                    if (renMig && renMig[SEED_FARM_ID] &&
+                        OLD_EN_NAMES.indexOf(renMig[SEED_FARM_ID].en) !== -1) {
+                        renMig[SEED_FARM_ID].en = NEW_EN;
+                        localStorage.setItem(RENAME_KEY, JSON.stringify(renMig));
+                    }
+                } catch (e) { console.warn('[company-seed] name migration skipped', e); }
+                // ----------------------------------------------------------
                 // Auto-favourite the seeded farms so they pin to the top on
                 // first launch (matches the app's behaviour for user-added
                 // farms). Users can unpin freely afterwards.
