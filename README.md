@@ -91,7 +91,7 @@ The service worker caches the app shell. When you push changes, bump the
 their next visit. The current value is:
 
 ```
-wnext-weathernextforjerantut-202605230342
+wnext-weathernextforjerantut-202605230415
 ```
 
 ---
