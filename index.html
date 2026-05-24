@@ -1890,14 +1890,14 @@
         // On the VERY FIRST launch this seeds:
         //   - the company display name (so the app shows it with no
         //     onboarding prompt — but it stays editable via Edit Name)
-        //   - 1 company farm(s) into customLocations
+        //   - 3 company farm(s) into customLocations
         // After that the user has full control: rename, edit, delete
         // (soft + permanent), add new farms, receive shared locations —
         // exactly like the generic build. The seed never runs again
         // unless SEED_VERSION is bumped in a future build.
         // ============================================================
         (function seedCompanyLocations() {
-            var SEED_VERSION = '2';
+            var SEED_VERSION = '3';
             var SEED_FLAG_KEY = 'weathernextforjerantut__wnext_company_seed_version';
             var CUSTOM_KEY = 'weathernextforjerantut__wnext_v41_custom_store';
             var FAV_KEY = 'weathernextforjerantut__wnext_v41_favs_store';
@@ -1916,7 +1916,7 @@
                     localStorage.setItem(NAME_KEY, "CR");
                     localStorage.setItem(NAME_ASCII_KEY, "CR");
                 }
-                var seedLocs = [{"id": "c_jt-simpang-tebing-tinggi", "en": "Kg. Simpang Tebing Tinggi", "zh": "德宾丁宜新村", "lat": 3.87467, "lng": 102.34467, "t": 0, "p": 0, "em": false}];
+                var seedLocs = [{"id": "c_jt-simpang-tebing-tinggi", "en": "Kg. Simpang Tebing Tinggi", "zh": "德宾丁宜新村", "lat": 3.87467, "lng": 102.34467, "t": 0, "p": 0, "em": false}, {"id": "c_jt-damak", "en": "Damak", "zh": "达玛", "lat": 3.949544, "lng": 102.214385, "t": 0, "p": 0, "em": false}, {"id": "c_jt-bukit-seladang", "en": "Bukit Seladang", "zh": "友联港神山", "lat": 3.91313, "lng": 102.35476, "t": 0, "p": 0, "em": false}];
                 // Merge into whatever is already there (e.g. a deep-link
                 // location the user received before first cold start).
                 var existing = [];
@@ -1975,7 +1975,7 @@
                     favs = rawF ? (JSON.parse(rawF) || []) : [];
                     if (!Array.isArray(favs)) favs = [];
                 } catch (e) { favs = []; }
-                var seedIds = ["c_jt-simpang-tebing-tinggi"];
+                var seedIds = ["c_jt-simpang-tebing-tinggi", "c_jt-damak", "c_jt-bukit-seladang"];
                 seedIds.forEach(function (id) {
                     if (favs.indexOf(id) === -1) favs.push(id);
                 });

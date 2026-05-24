@@ -21,15 +21,17 @@ app. It works offline after the first visit (service-worker cached).
 
 ---
 
-## Seeded location
+## Seeded locations
 
-On first launch the app seeds this farm. It is auto-favourited and can be
+On first launch the app seeds these farms. They are auto-favourited and can be
 renamed, edited, or deleted freely afterwards. Add as many more farms as you
 like from inside the app.
 
 | English | 中文 | Coordinates |
 |---|---|---|
 | Kg. Simpang Tebing Tinggi | 德宾丁宜新村 | 3.87467, 102.34467 |
+| Damak | 达玛 | 3.949544, 102.214385 |
+| Bukit Seladang | 友联港神山 | 3.91313, 102.35476 |
 
 The app also seeds a default user display name (**CR**), which stays editable
 via **Edit Name** in the app.
@@ -91,7 +93,7 @@ The service worker caches the app shell. When you push changes, bump the
 their next visit. The current value is:
 
 ```
-wnext-weathernextforjerantut-202605230505
+wnext-weathernextforjerantut-202605230705
 ```
 
 ---
