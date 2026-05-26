@@ -3,7 +3,7 @@
 // Version 1.0.0 — bump CACHE_VERSION on each release
 // ============================================================
 
-const CACHE_VERSION = 'wnext-weathernextforjerantut-202605230705';
+const CACHE_VERSION = 'wnext-weathernextforjerantut-202605230745';
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 const WEATHER_CACHE = `${CACHE_VERSION}-weather`;
@@ -82,22 +82,25 @@ self.addEventListener('fetch', (event) => {
   // Only handle GET requests
   if (request.method !== 'GET') return;
 
-  // 1. Firebase, Gemini, Google APIs — NEVER cache (auth + real-time)
+  // 1. Firebase, Gemini, Google APIs — do NOT intercept at all.
+  //
+  // This rule used to do event.respondWith(fetch(request).catch(... JSON 503 ...)).
+  // That was a bug: it also caught the Firebase SDK JavaScript module requests
+  // (gstatic.com/firebasejs/...). When such a request failed, the SW handed the
+  // browser a JSON body; the browser then tried to execute JSON as an ES module,
+  // which throws and kills the entire type="module" script — a fully blank page,
+  // repeated on every load because the installed SW kept doing it.
+  //
+  // Fix: don't substitute anything for these requests. Returning here (with no
+  // event.respondWith) lets the browser fetch them natively. A real network
+  // failure becomes a normal rejected fetch, which the app already handles —
+  // never a poisoned JSON module.
   if (
     url.hostname.includes('firebaseio.com') ||
     url.hostname.includes('googleapis.com') ||
     url.hostname.includes('firebase') ||
     url.hostname.includes('gstatic.com') && url.pathname.includes('firebasejs')
   ) {
-    // Network-only, but allow graceful failure
-    event.respondWith(
-      fetch(request).catch(() => {
-        return new Response(
-          JSON.stringify({ error: 'offline', message: 'Network unavailable' }),
-          { status: 503, headers: { 'Content-Type': 'application/json' } }
-        );
-      })
-    );
     return;
   }
 
