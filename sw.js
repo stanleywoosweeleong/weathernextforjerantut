@@ -42,7 +42,7 @@
 // / Dense fog in the morning / Kabus tebal waktu pagi). Jerantut identity
 // (weathernextforjerantut) unchanged.
 
-const CACHE_VERSION = 'wnext-weathernextforjerantut-202606081900';
+const CACHE_VERSION = 'wnext-weathernextforjerantut-202606091400';
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 const WEATHER_CACHE = `${CACHE_VERSION}-weather`;
